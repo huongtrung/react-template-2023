@@ -1,8 +1,26 @@
 {
   "name": "react-template-2023",
-  "version": "0.0.1",
+  "version": "0.1",
+  "keywords": [
+    "react",
+    "create-react-app",
+    "template"
+  ],
   "description": "React Template 2023",
-  "repository": "https://github.com/huongtrung/react-template-2023",
-  "author": "HuongNT",
-  "license": "MIT"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/huongtrung/react-template-2023",
+    "directory": "packages/cra-template"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  },
+  "bugs": {
+    "url": "https://github.com/facebook/create-react-app/issues"
+  },
+  "files": [
+    "template",
+    "template.json"
+  ]
 }
