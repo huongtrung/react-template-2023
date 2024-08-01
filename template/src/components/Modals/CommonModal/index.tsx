@@ -19,7 +19,7 @@ const PROPS_CONFIG: PropsConfigIF = {
   [PROPS_CONFIG_TYPES.DEFAULT]: {},
 }
 
-const INIT_CONFIG: CommonModalState = {
+const INIT_CONFIG: CommonModalState | null = {
   open: false,
   closable: true,
   children: null,
@@ -30,7 +30,8 @@ const INIT_CONFIG: CommonModalState = {
     ACTION_AREA.CLOSE_ICON
   ],
   keepData: false,
-  propsConfig: PROPS_CONFIG_TYPES.DEFAULT
+  propsConfig: PROPS_CONFIG_TYPES.DEFAULT,
+  hideFooter: false
 }
 
 const CommonModal = forwardRef<GlobalModalRefIF>(function CommonModal(_props, ref) {
@@ -85,17 +86,19 @@ const CommonModal = forwardRef<GlobalModalRefIF>(function CommonModal(_props, re
       <DialogContent {...propsConfigData?.content}>
         {config.children}
       </DialogContent>
-      <DialogActions {...propsConfigData?.action}>
-        <Action
-          footer={config.footer}
-          okText={config.okText}
-          cancelText={config.cancelText}
-          onOk={config.onOk}
-          onCancel={config.onCancel}
-          hiddenArea={config.hiddenArea}
-          setConfig={setConfig}
-        />
-      </DialogActions>
+      {!config.hideFooter &&
+        <DialogActions {...propsConfigData?.action}>
+          <Action
+            footer={config.footer}
+            okText={config.okText}
+            cancelText={config.cancelText}
+            onOk={config.onOk}
+            onCancel={config.onCancel}
+            hiddenArea={config.hiddenArea}
+            setConfig={setConfig}
+          />
+        </DialogActions>
+      }
     </Dialog>
   )
 })

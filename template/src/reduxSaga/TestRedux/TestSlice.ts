@@ -1,12 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export interface IInitialState {
+    taskList: any
+}
+
+export const initialState: IInitialState = {
+    taskList: []
+}
+
 const testReducer = createSlice({
     name: 'testReducer',
-    initialState: {},
+    initialState,
     reducers: {
-        testActionRequest: (state, action) => {},
+        testActionRequest: (state, action) => { },
         testActionSuccess: (state, action) => {
             console.log("test action Success")
+        },
+        getTaskListRequest: (state) => { },
+        getTaskListSuccess: (state, action) => {
+            state.taskList = action.payload
+        },
+        getTaskListFailed: (state, action) => {
+            state.taskList = []
         },
     }
 })

@@ -1,0 +1,5 @@
+export const LOGIN_FIELD_NAME = {
+    USER_NAME: 'USER_NAME',
+    PASSWORD: 'PASSWORD',
+
+}

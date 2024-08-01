@@ -53,7 +53,7 @@ const Home = () => {
     },
     {
       label: "Logout", href: "/login", onClick: () => {
-        dispatch(AuthActions.logoutSuccess())
+        // dispatch(AuthActions.logoutSuccess())
       }
     }
   ] : [
@@ -103,7 +103,7 @@ const Home = () => {
     },
     {
       label: "Login", href: "/signed-in", onClick: () => {
-        dispatch(AuthActions.loginSuccess())
+        // dispatch(AuthActions.loginSuccess())
       }, Icon: <LoginIcon />,
     },
     {

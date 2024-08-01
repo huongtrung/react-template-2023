@@ -32,7 +32,7 @@ const Action = (props: ActionProps) => {
   }
 
   switch (footer) {
-    case undefined:
+    case COMPONENT_TYPE.HIDE_FOOTER:
     case null:
       return null
 

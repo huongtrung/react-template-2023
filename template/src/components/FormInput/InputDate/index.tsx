@@ -11,6 +11,7 @@ interface InputDateProps {
   onChangeCallBack?: (value: any) => void
   hideIcon?: boolean
   maxDate?: unknown
+  minDate?: unknown
   disabled?: boolean
   isDisableColorDate?: boolean
   isBlurIcon?: boolean
@@ -31,6 +32,7 @@ const InputDate: React.FC<InputDateProps> = ({
   onChangeCallBack,
   hideIcon,
   maxDate,
+  minDate,
   disabled,
   isBlurIcon,
   isDisableColorDate,
@@ -84,6 +86,7 @@ const InputDate: React.FC<InputDateProps> = ({
           //   OpenPickerIcon: Calendar,
           // }}
           maxDate={maxDate ? maxDate : undefined}
+          minDate={minDate ? minDate : undefined}
           disableOpenPicker={hideIcon}
           dayOfWeekFormatter={(day) => day}
           inputFormat={dateFormat ? dateFormat : "DD/MM/YYYY"}

@@ -21,11 +21,15 @@
     "@types/react-dom": "^18.0.0",
     "@types/redux-logger": "^3.0.9",
     "axios": "^1.5.0",
+    "bpmn-js": "^13.0.4",
+    "bpmn-js-properties-panel": "^5.20.0",
+    "file-saver": "^2.0.5",
     "i18next": "^23.5.1",
     "i18next-browser-languagedetector": "^7.1.0",
     "moment": "^2.29.4",
     "ramda": "^0.29.0",
     "react": "^18.2.0",
+    "react-bpmn": "^0.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.2",
     "react-i18next": "^13.2.2",
@@ -50,11 +54,17 @@
     "eject": "craco eject",
     "prepare": "husky install"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
+  "compilerOptions": {
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
     ]
+  },
+  "eslintConfig": {
+    "extends": "react-app",
+    "rules": {
+      "jsx-a11y/anchor-is-valid": "off"
+    }
   },
   "browserslist": {
     "production": [
@@ -76,8 +86,6 @@
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
     "commitlint": "^17.7.1",
-    "eslint": "^8.49.0",
-    "eslint-plugin-react": "^7.33.2",
     "husky": "^8.0.3",
     "tsconfig-paths": "^4.2.0"
   }

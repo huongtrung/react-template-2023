@@ -3,12 +3,14 @@ import React, { lazy } from 'react'
 import { RouteConfigurations } from './types'
 import Home from '@/pages/Home'
 import TestForm from '@/pages/test-form'
+import Login from '@/pages/Login'
+
 
 // const Home = lazy(() => import('@/pages/Home'))
 // const TestForm = lazy(() => import('@/pages/test-form'))
 
 const PublicRoutes: RouteConfigurations[] = [
-  { path: '/login', element: <Home /> },
+  { path: '/login', element: <Login /> },
   { path: '/test-form', element: <TestForm /> },
   { path: '/item-01', element: <Home /> },
   { path: '/item-02', element: <Home /> },
