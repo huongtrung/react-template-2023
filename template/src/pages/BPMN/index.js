@@ -40,6 +40,9 @@ import { useNavigate } from 'react-router-dom';
 import Utilities from '@/utils/Util';
 import { globalLoading } from '@/components/GlobalLoading';
 import axios from 'axios';
+import APIConfig from '@/constants/APIConfig';
+import { globalModal } from '@/components/Modals/GlobalModal';
+import { webLocalStorage } from '@/utils/storage';
 
 const pages = ['Vẽ BPMN', 'Danh sách Task list'];
 const settings = ['Trang cá nhân', 'Đăng xuất'];
@@ -107,11 +110,29 @@ const BPMN = () => {
             console.error('Error importing BPMN diagram', err);
           } else {
             console.log('BPMN diagram imported successfully');
+
+            const elementRegistry = bpmnJSRef.current?.get('elementRegistry')
+            const modeling = bpmnJSRef.current?.get('modeling')
+
+            // var elementToColor = elementRegistry.get('Activity_1pssn0f');
+            // modeling.setColor([ elementToColor ], {
+            //   stroke: 'green',
+            //   fill: 'rgb(152, 203, 152)'
+            // });
+
+            // Option 3: Color via Marker + CSS Styling
+            // bpmnJSRef.current.get('canvas').addMarker('Activity_1pssn0f', 'highlight');
+            // highlightActiveTasks(['Activity_1pssn0f']);
           }
         });
       };
       reader.readAsText(file);
     }
+  };
+
+  const highlightActiveTasks = (activeTaskIds) => {
+    const canvas = bpmnJSRef.current.get('canvas');
+    canvas.addMarker('Activity_1pssn0f', 'highlight');
   };
 
   const handleSave = () => {
@@ -139,8 +160,6 @@ const BPMN = () => {
     fileRef.current.click();
   };
 
-
-
   const handleFileChoose = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -149,17 +168,25 @@ const BPMN = () => {
       bodyFormData.append('upload', file)
       console.log('Selected file:', bodyFormData);
       try {
-        const response = await axios.post('10.32.15.151/engine-rest/deployment/create', bodyFormData, {
+        const response = await axios.post(APIConfig.API_URL + '/engine-rest/deployment/create', bodyFormData, {
           headers: {
             'Content-type': 'multipart/form-data',
           }
         })
-        // globalLoading.hide()
+        globalLoading.hide()
         const res = response?.data
         console.log('res = ', response)
-        if (res?.errorMessage === 'Success') {
-          return res
+        if (response?.status === 200 && response?.statusText === '') {
+          const data = res?.deployedProcessDefinitions
+          let keySave = ''
+          Object.keys(data).forEach(function(k, index) {
+            keySave = data[k]?.key
+          });
+          console.log('keySave', keySave)
+          webLocalStorage.set('KEY', keySave)
+          globalModal.open({title : 'Upload file thành công', onCancel : ''})
         } else {
+          globalModal.open({title : 'Upload file không thành công', onCancel : ''})
         }
       } catch (error) {
         globalLoading.hide()
@@ -255,6 +282,25 @@ const BPMN = () => {
         onChange={handleFileChoose}
       />
       <input type="file" accept=".bpmn, .xml" onChange={handleFileChange} style={{ display: 'none' }} ref={fileInputRef} />
+      <style>
+        {`
+          .djs-activate {
+            stroke: red !important;
+            stroke-width: 2px !important;
+          }
+          .highlight::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+          }
+        `}
+      </style>
     </div>
   );
 };

@@ -15,26 +15,6 @@ interface FetchParams {
 }
 
 class ApiUtil {
-  async configRequest(config: RequestConfig) {
-    const {
-      method = "POST",
-      timeout = 3000,
-      headers = {},
-      contentType,
-      url,
-    } = config
-
-    return {
-      url,
-      method,
-      timeout,
-      headers: {
-        ...headers,
-        "Content-Type": contentType,
-        Authorization: "Bearer Token...",
-      },
-    }
-  }
 
   async onError(response: AxiosResponse) {
     const { data: responseData } = response
@@ -53,6 +33,30 @@ class ApiUtil {
     }
   }
 
+  async configRequest(config: RequestConfig) {
+    const {
+      method = "POST",
+      timeout = 3000,
+      headers = {},
+      contentType,
+      url,
+      data
+    } = config
+
+    return {
+      url,
+      method,
+      timeout,
+      data,
+      headers: {
+        ...headers,
+        "Content-Type": contentType,
+        // "Access-Control-Allow-Origin" : "*",
+        // Authorization: "Bearer Token...",
+      },
+    }
+  }
+
   async fetch(params: FetchParams) {
     const {
       url,
@@ -67,6 +71,7 @@ class ApiUtil {
         contentType,
         url,
       })
+      console.log('config ', requestConfig)
       const response = await axiosInstance(requestConfig)
 
       if (response.data.status !== RESPONSE_CODE.SUCCESS && useGeneralErrorHandlding) this.onError(response)

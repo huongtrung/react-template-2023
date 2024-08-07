@@ -1,11 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface IInitialState {
-    taskList: any
+    taskList: any,
+    key : string,
+    id : string
 }
 
 export const initialState: IInitialState = {
-    taskList: []
+    taskList: [],
+    key : '',
+    id : ''
 }
 
 const testReducer = createSlice({
@@ -13,8 +17,8 @@ const testReducer = createSlice({
     initialState,
     reducers: {
         testActionRequest: (state, action) => { },
-        testActionSuccess: (state, action) => {
-            console.log("test action Success")
+        saveKeySuccess: (state, action) => {
+            state.key = action.payload
         },
         getTaskListRequest: (state) => { },
         getTaskListSuccess: (state, action) => {
@@ -23,6 +27,16 @@ const testReducer = createSlice({
         getTaskListFailed: (state, action) => {
             state.taskList = []
         },
+        approveRequest: (state) => { },
+        approveSuccess: (state, action) => {
+        },
+        approveFailed: (state, action) => {
+        },
+        startProcessRequest: (state) => { },
+        startProcessSuccess: (state, action) => {
+            state.id = action.payload
+        },
+        completeRequest: (state, action) => { },
     }
 })
 

@@ -82,7 +82,7 @@ const CommonModal = forwardRef<GlobalModalRefIF>(function CommonModal(_props, re
           {config.closeIcon || propsConfigData.closeIcon?.children || <CloseIcon />}
         </IconButton>
       }
-      <DialogTitle {...propsConfigData?.title}>{config.title}</DialogTitle>
+      <DialogTitle style={{marginRight : 20}} {...propsConfigData?.title}>{config.title}</DialogTitle>
       <DialogContent {...propsConfigData?.content}>
         {config.children}
       </DialogContent>

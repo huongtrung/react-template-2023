@@ -29,8 +29,10 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppSelector"
 import { AuthActions } from "@/reduxSaga/Auth"
 import Utilities from "@/utils/Util"
+import { TestActions } from "@/reduxSaga/TestRedux"
+import { webLocalStorage } from "@/utils/storage"
 
-const pages = ['Xin nghỉ phép', 'Danh sách đơn xin nghỉ phép', 'Danh sách đơn xin nghỉ phép đã duyệt'];
+const pages = ['Xin nghỉ phép'];
 const settings = ['Trang cá nhân', 'Đăng xuất'];
 
 const OFF_METHOD = [
@@ -53,8 +55,15 @@ const TestForm = () => {
   formState: { errors },
  } = methods
  const { isSignedIn, role, userName } = useAppSelector(state => state.auth)
+ const { id } = useAppSelector(state => state.test)
 
  const dispatch = useAppDispatch()
+
+ useEffect(() => {
+  const key = webLocalStorage.get('KEY')
+  console.log('key', key)
+  dispatch(TestActions.startProcessRequest(key))
+ }, [])
 
  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -76,7 +85,22 @@ const TestForm = () => {
  };
 
  const onSubmit = () => {
-  console.log("values", getValues())
+  const method = getValues(FORM_FIELD_NAME.OFF_METHOD)
+  const dayOff = getValues(FORM_FIELD_NAME.DAY_OFF)
+  let value = 0
+  if (method == 'OFF') {
+   value = 31
+  } else {
+   value = parseInt(dayOff)
+  }
+  const data = {
+   "variables": {
+    "dayOff": {
+     "value": value
+    }
+   }
+  }
+  dispatch(TestActions.completeRequest({ id, data }))
  }
 
  const onError = () => {
