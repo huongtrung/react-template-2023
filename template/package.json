@@ -24,6 +24,7 @@
     "bpmn-js": "^13.0.4",
     "bpmn-js-properties-panel": "^5.20.0",
     "file-saver": "^2.0.5",
+    "formiojs": "^4.19.5",
     "i18next": "^23.5.1",
     "i18next-browser-languagedetector": "^7.1.0",
     "moment": "^2.29.4",
