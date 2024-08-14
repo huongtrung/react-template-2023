@@ -3,6 +3,7 @@ import { Button } from "@mui/material"
 
 import { ActionProps } from "./types"
 import { ACTION_AREA, COMPONENT_TYPE } from "../../types"
+import CustomButton from "@/components/CustomButton"
 
 const Action = (props: ActionProps) => {
   const {
@@ -39,8 +40,14 @@ const Action = (props: ActionProps) => {
     case COMPONENT_TYPE.DEFAULT:
       return (
         <>
-          {cancelText && <Button onClick={handleOnCancel}>{cancelText}</Button>}
-          {okText && <Button onClick={handleOnOk} autoFocus>{okText}</Button>}
+          {okText && 
+            <CustomButton
+            variant="contained"
+            sx={{ width: '100%' }}
+            title={"OK"}
+            onClick={handleOnOk}
+           />
+          }
         </>
       )
 
@@ -49,5 +56,6 @@ const Action = (props: ActionProps) => {
       return <>{footer}</>
   }
 }
+{/* <Button color='primary' onClick={handleOnOk} autoFocus>{okText}</Button>} */}
 
 export default Action

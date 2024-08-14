@@ -181,6 +181,7 @@ const InputText: React.FC<InputTextProps> = ({
         ..._inputProps,
         autoComplete: autoComplete ? autoComplete : "off",
       }}
+      InputProps={{ inputProps: { min: "1", max: "10", step: "1" } }}
       label={<span>{label}</span>}
       value={value ? convertTextValue(value) : ""}
       onChange={onChangeHandle}

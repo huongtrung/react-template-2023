@@ -154,6 +154,7 @@ const BPMN = () => {
 
   const handleOpenFileDialog = () => {
     fileInputRef.current.click();
+    
   };
 
   const handleSelectFile = () => {
@@ -191,6 +192,10 @@ const BPMN = () => {
       } catch (error) {
         globalLoading.hide()
         console.log('err = ', error)
+        globalModal.open({
+          title: 'Lỗi hệ thống ! Hãy thử lại sau.',
+          children: undefined
+      })
       }
     }
   };
@@ -213,7 +218,7 @@ const BPMN = () => {
           <Box>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={userName} src="/static/images/avatar/2.jpg" />
+                <Avatar alt={userName?.toUpperCase()} src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
             <Menu
@@ -287,7 +292,8 @@ const BPMN = () => {
           .djs-activate {
             stroke: red !important;
             stroke-width: 2px !important;
-          }
+          }import { *asR } from 'ramda';
+
           .highlight::after {
             content: '';
             position: absolute;

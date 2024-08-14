@@ -4,7 +4,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  IconButton
+  IconButton,
+  Box
 } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close'
 import styled from "styled-components"
@@ -25,7 +26,6 @@ const INIT_CONFIG: CommonModalState | null = {
   children: null,
   hiddenArea: [
     ACTION_AREA.ACCEPT_BUTTON,
-    ACTION_AREA.CANCEL_BUTTON,
     ACTION_AREA.BACKDROP,
     ACTION_AREA.CLOSE_ICON
   ],
@@ -69,6 +69,7 @@ const CommonModal = forwardRef<GlobalModalRefIF>(function CommonModal(_props, re
       onTransitionExited={clearModalData}
       {...propsConfigData?.dialog}
     >
+       <Box sx={{ margin : 2}}>
       {
         config.closable &&
         <IconButton edge="end" onClick={closeModal}
@@ -82,10 +83,10 @@ const CommonModal = forwardRef<GlobalModalRefIF>(function CommonModal(_props, re
           {config.closeIcon || propsConfigData.closeIcon?.children || <CloseIcon />}
         </IconButton>
       }
-      <DialogTitle style={{marginRight : 20}} {...propsConfigData?.title}>{config.title}</DialogTitle>
-      <DialogContent {...propsConfigData?.content}>
+      <DialogTitle style={{ marginTop : 20, marginBottom: 10, color : 'black', fontWeight : 'bold'}} {...propsConfigData?.title}>{config.title}</DialogTitle>
+      {/* <DialogContent {...propsConfigData?.content}>
         {config.children}
-      </DialogContent>
+      </DialogContent> */}
       {!config.hideFooter &&
         <DialogActions {...propsConfigData?.action}>
           <Action
@@ -99,6 +100,7 @@ const CommonModal = forwardRef<GlobalModalRefIF>(function CommonModal(_props, re
           />
         </DialogActions>
       }
+      </Box>
     </Dialog>
   )
 })

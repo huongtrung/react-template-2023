@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react"
+import React, { useEffect, useMemo } from "react"
 import {
  Box,
  Divider,
@@ -34,14 +34,10 @@ import { typeInputComponent } from "@/components/FormInput/helper";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { testSchema } from "./validate";
-
-function generate(element: React.ReactElement) {
- return [0, 1, 2].map((value) =>
-  React.cloneElement(element, {
-   key: value,
-  }),
- );
-}
+import { TestActions } from "@/reduxSaga/TestRedux";
+import ModalApprove from "./ModalApprove";
+import { Button, Modal } from 'antd';
+import CloseIcon from '@mui/icons-material/Close'
 
 const APPROVE_METHOD = [
  { value: "OK", label: "Đồng ý" },
@@ -51,12 +47,15 @@ const APPROVE_METHOD = [
 const settings = ['Trang cá nhân', 'Đăng xuất'];
 const Approve: React.FC = () => {
  const { isSignedIn, role, userName } = useAppSelector(state => state.auth)
+ const { assignList } = useAppSelector(state => state.test)
 
  const dispatch = useAppDispatch()
 
  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
- const [isOpen, setIsOpen] = React.useState<Boolean>(false);
+ const [isOpen, setIsOpen] = React.useState<boolean>(false);
+ const [itemId, setItemId] = React.useState<string>('');
+ const [approveStr, setApproveStr] = React.useState<String>('');
 
  const methods = useForm({
   mode: "onSubmit",
@@ -66,9 +65,10 @@ const Approve: React.FC = () => {
  const {
   control,
   getValues,
-  watch,
+  setError,
   setValue,
   handleSubmit,
+  reset,
   formState: { errors },
  } = methods
 
@@ -88,13 +88,52 @@ const Approve: React.FC = () => {
   dispatch(AuthActions.logout())
  };
 
-console.log('Approve: ', watch());
+ useEffect(() => {
+  const query = Utilities.userId(role)
+  dispatch(TestActions.getAssignListRequest(query))
+ }, [])
+
+ console.log({ isOpen })
+
+ const handleClaimUser = (id: string) => {
+  console.log({ id })
+  const values: any = getValues()
+  if (Utilities.isEmpty(values[FORM_FIELD_NAME.METHOD])) {
+   setApproveStr('Ngày bắt đầu nghỉ không được để trống')
+  } else {
+   setApproveStr('')
+   let approve = ''
+   if (values[FORM_FIELD_NAME.METHOD] == 'OK') {
+    approve = 'Yes'
+   } else {
+    approve = 'No'
+   }
+   const data = {
+    "variables": {
+     "comment": {
+      "value": approve,
+      "type": "String"
+     }
+    }
+   }
+   const callback = () => {
+    reset()
+    const query = Utilities.userId(role)
+    dispatch(TestActions.getAssignListRequest(query))
+   }
+   dispatch(TestActions.claimUserByManager({ id, data, callback }))
+  }
+ }
+
+
+ const isGDK = useMemo(() => {
+  return Utilities.userId(role) == 'tonggiamdoc'
+ }, [role])
 
  return (
   <div>
    <AppBar position="static">
     <Toolbar>
-     <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
      <MenuItem onClick={handleCloseNavMenu}>
       <Typography variant="subtitle1" textAlign="center">{'Danh sách đơn xin nghỉ'}</Typography>
      </MenuItem>
@@ -134,62 +173,80 @@ console.log('Approve: ', watch());
     </Toolbar>
    </AppBar>
    <List sx={{ m: 5 }}>
-    {generate(
-     <>
-      <ListItem
-       onClick={() => {
-        globalModal.open({
-         hideFooter: true,
-         children: (
-          <div
-           style={{ height: "100%", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-           <div>
-            <h1 style={{ margin: 20 }} onClick={() => console.log("flow: click")}>Phê duyệt đơn xin nghỉ</h1>
-            <FormInput
-             label='Phê duyệt'
-             control={control}
-             options={APPROVE_METHOD}
-             name={FORM_FIELD_NAME.METHOD}
-             type={typeInputComponent.InputSelect}
-            />
-            <FormInput
-             label='Ý kiến'
-             placeholder='Nhập ý kiến'
-             control={control}
-             name={FORM_FIELD_NAME.REASON}
-             type={typeInputComponent.InputText}
-            />
-            <CustomButton
-             variant="contained"
-             sx={{ width: '100%' }}
-             title='Gửi'
-             onClick={() => {
-             }}
-            />
-           </div>
-
-          </div>
-         )
-        })
-       }}
-       secondaryAction={
-        <IconButton edge="end" aria-label="delete">
-         <DeleteIcon />
-        </IconButton>
-       }
-      >
-       <ListItemAvatar>
-        <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-       </ListItemAvatar>
-       <ListItemText
-        primary="Single-line item"
-        secondary={'Secondary text'}
-       />
-      </ListItem>
-      <Divider />
-     </>
-    )}
+    {assignList?.map((item: any) => {
+     return (
+      <>
+       <ListItem
+        onClick={() => {
+         setIsOpen(true)
+         setItemId(item?.id)
+        }}
+       >
+        <ListItemAvatar>
+         <Avatar alt="Kiên" src="/static/images/avatar/2.jpg" />
+        </ListItemAvatar>
+        <ListItemText
+         primary="Nhân viên : Nguyễn Trung Kiên"
+         secondary={item?.id}
+        />
+       </ListItem>
+       <Divider />
+      </>
+     )
+    })
+    }
    </List>
+   <Modal
+    open={isOpen}
+    mask={false}
+    style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20 }}
+    closable={false}
+    footer={null}
+   >
+    <div
+     style={{ height: "100%", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+     <div>
+      <h1 style={{ margin: 20, textAlign: 'center', color: isGDK ? 'red' : 'black' }}>{isGDK ? 'Phê duyệt đơn xin thôi việc' : 'Phê duyệt đơn xin nghỉ'}</h1>
+      <IconButton edge="end" onClick={() => {
+       setIsOpen(false)
+      }}
+       sx={{
+        position: 'absolute',
+        right: 18,
+        top: 10,
+       }}
+      >
+       <CloseIcon />
+      </IconButton>
+      <FormInput
+       label={isGDK ? 'Phê duyệt đơn xin thôi việc' : 'Phê duyệt đơn xin nghỉ phép'}
+       control={control}
+       options={APPROVE_METHOD}
+       name={FORM_FIELD_NAME.METHOD}
+       type={typeInputComponent.InputSelect}
+       errorMessage={errors[FORM_FIELD_NAME.METHOD]?.message}
+      />
+      <FormInput
+       required
+       label='Ý kiến'
+       placeholder='Nhập ý kiến'
+       control={control}
+       name={FORM_FIELD_NAME.REASON}
+       type={typeInputComponent.InputText}
+       errorMessage={errors[FORM_FIELD_NAME.REASON]?.message}
+      />
+      <CustomButton
+       variant="contained"
+       sx={{ width: '100%' }}
+       title='Gửi'
+       onClick={handleSubmit(() => {
+        setIsOpen(false)
+        handleClaimUser(itemId)
+       })}
+      />
+     </div>
+    </div>
+   </Modal>
   </div>
  );
 }

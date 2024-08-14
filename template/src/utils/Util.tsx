@@ -18,6 +18,20 @@ export default class Utilities {
     }
   }
 
+  static userId = (role: string) => {
+    switch (role) {
+      case ROLE.QLTT:
+        return 'quanlytructiep'
+      case ROLE.TP:
+        return 'truongphong'
+      case ROLE.GDK:
+        return 'tonggiamdoc'
+      default:
+        return 'nhanvien'
+    }
+  }
+
+
   static isNullish = (obj: any) => {
     if (obj == null || obj == undefined) {
       return true

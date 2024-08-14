@@ -2,14 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export interface IInitialState {
     taskList: any,
-    key : string,
-    id : string
+    key: string,
+    id: string,
+    processDefinitionId: string,
+    assignList: any
 }
 
 export const initialState: IInitialState = {
     taskList: [],
-    key : '',
-    id : ''
+    key: '',
+    id: '',
+    processDefinitionId: '',
+    assignList: []
 }
 
 const testReducer = createSlice({
@@ -32,11 +36,25 @@ const testReducer = createSlice({
         },
         approveFailed: (state, action) => {
         },
-        startProcessRequest: (state) => { },
+        startProcessRequest: (state,action) => { },
         startProcessSuccess: (state, action) => {
             state.id = action.payload
         },
+        processDefinitionKeyRequest: (state, action) => { },
+        processDefinitionKey2Request: (state, action) => { },
+        processDefinitionKeySuccess: (state, action) => {
+            state.processDefinitionId = action.payload
+         },
         completeRequest: (state, action) => { },
+        claimUser: (state, action) => { },
+        getAssignListRequest: (state, action) => { },
+        getAssignListSuccess: (state, action) => {
+            state.assignList = action.payload
+        },
+        getAssignListFailed: (state, action) => {
+            state.assignList = []
+        },
+        claimUserByManager: (state, action) => {},
     }
 })
 

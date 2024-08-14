@@ -2,6 +2,7 @@ import { AxiosRequestConfig, AxiosResponse } from "axios"
 
 import axiosInstance from "@/config/axios"
 import { RESPONSE_CODE } from "@/constants/HTTPResponseStatus"
+import { globalModal } from "@/components/Modals/GlobalModal"
 
 interface RequestConfig extends AxiosRequestConfig {
   contentType: string
@@ -28,8 +29,15 @@ class ApiUtil {
 
       case RESPONSE_CODE.CONTENT_TOO_LARGE:
         break
-
+      case 500:
+      case 404:
+        globalModal.open({
+          title: 'Lỗi hệ thống ! Hãy thử lại sau.',
+          children: undefined
+        })
+        break
       default:
+
     }
   }
 
@@ -76,7 +84,7 @@ class ApiUtil {
 
       if (response.data.status !== RESPONSE_CODE.SUCCESS && useGeneralErrorHandlding) this.onError(response)
       return response
-    } catch (error) {}
+    } catch (error) { }
   }
 }
 

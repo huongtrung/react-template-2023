@@ -3,6 +3,7 @@ const ROLE = {
  QLTT: 'QLTT',
  TP: 'TP',
  GDK: 'GDK',
+ STAFF : 'STAFF'
 }
 
 export {

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import FormInput from "@/components/FormInput"
 import {
  Box,
@@ -17,6 +17,7 @@ import { CustomButton } from "@/components"
 import { isEmpty } from "ramda"
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppSelector"
 import { AuthActions } from "@/reduxSaga/Auth"
+import { globalModal } from "@/components/Modals/GlobalModal"
 
 const TFFN = LOGIN_FIELD_NAME
 
@@ -37,20 +38,30 @@ const Login = () => {
  const dispatch = useAppDispatch()
 
  const onSubmit = () => {
-  console.log("values", getValues())
-  dispatch(AuthActions.loginSuccess({ isSignIn: true, userName: getValues()[TFFN.USER_NAME] }))
+  const user = ['nhanvien', 'admin', 'tp', 'qltt', 'gdk']
+  if (user.includes(getValues()[TFFN.USER_NAME])) {
+   console.log("values", getValues())
+   dispatch(AuthActions.loginSuccess({ isSignIn: true, userName: getValues()[TFFN.USER_NAME] }))
+  } else {
+   globalModal.open({
+    title: 'Tên đăng nhập không tồn tại',
+    children: undefined
+   })
+  }
+
  }
 
  const onError = () => {
   console.log({ errors })
  }
+
  return (
   <Box
    sx={{
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-   
+
    }}>
    <Card
     sx={{
