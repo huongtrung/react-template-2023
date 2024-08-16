@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-js.css';
+import 'diagram-js-minimap/assets/diagram-js-minimap.css';
 
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import '@bpmn-io/properties-panel/assets/properties-panel.css';
@@ -16,7 +17,8 @@ import './style.less';
 import BpmnJS from 'bpmn-js/lib/Modeler';
 import {
   BpmnPropertiesPanelModule,
-  BpmnPropertiesProviderModule
+  BpmnPropertiesProviderModule,
+  CamundaPlatformPropertiesProviderModule
 } from 'bpmn-js-properties-panel';
 import magicPropertiesProviderModule from './provider/magic';
 import magicModdleDescriptor from './descriptors/magic';
@@ -43,6 +45,8 @@ import axios from 'axios';
 import APIConfig from '@/constants/APIConfig';
 import { globalModal } from '@/components/Modals/GlobalModal';
 import { webLocalStorage } from '@/utils/storage';
+import CamundaBpmnModdle from 'camunda-bpmn-moddle/resources/camunda.json'
+import minimapModule from 'diagram-js-minimap';
 
 const pages = ['Vẽ BPMN', 'Danh sách Task list'];
 const settings = ['Trang cá nhân', 'Đăng xuất'];
@@ -79,24 +83,30 @@ const BPMN = () => {
   };
 
   useEffect(() => {
-    bpmnJSRef.current = new BpmnJS({
-      container: containerRef.current,
-      propertiesPanel: {
-        parent: propertiesPanelRef.current,
-      },
-      additionalModules: [
-        BpmnPropertiesPanelModule,
-        BpmnPropertiesProviderModule,
-        magicPropertiesProviderModule
-      ],
-      moddleExtensions: {
-        magic: magicModdleDescriptor
-      }
-    });
-
-    return () => {
-      bpmnJSRef.current?.destroy();
-    };
+    try {
+      bpmnJSRef.current = new BpmnJS({
+        container: containerRef.current,
+        propertiesPanel: {
+          parent: propertiesPanelRef.current,
+        },
+        additionalModules: [
+          BpmnPropertiesPanelModule,
+          BpmnPropertiesProviderModule,
+          magicPropertiesProviderModule,
+          CamundaPlatformPropertiesProviderModule,
+          minimapModule
+        ],
+        moddleExtensions: {
+          magic: magicModdleDescriptor,
+          camunda: CamundaBpmnModdle,
+        }
+      });
+      return () => {
+        bpmnJSRef.current?.destroy();
+      };
+    } catch (error) {
+      console.log({error})
+    }
   }, []);
 
   const handleFileChange = (event) => {
@@ -109,20 +119,20 @@ const BPMN = () => {
           if (err) {
             console.error('Error importing BPMN diagram', err);
           } else {
+            bpmnJSRef.current?.get('minimap').open();
             console.log('BPMN diagram imported successfully');
 
             const elementRegistry = bpmnJSRef.current?.get('elementRegistry')
             const modeling = bpmnJSRef.current?.get('modeling')
 
-            // var elementToColor = elementRegistry.get('Activity_1pssn0f');
-            // modeling.setColor([ elementToColor ], {
-            //   stroke: 'green',
-            //   fill: 'rgb(152, 203, 152)'
-            // });
+            var elementToColor = elementRegistry.get('Activity_1pssn0f');
+            modeling.setColor([ elementToColor ], {
+              stroke: 'green',
+              fill: 'rgb(152, 203, 152)'
+            });
 
-            // Option 3: Color via Marker + CSS Styling
-            // bpmnJSRef.current.get('canvas').addMarker('Activity_1pssn0f', 'highlight');
-            // highlightActiveTasks(['Activity_1pssn0f']);
+            bpmnJSRef.current.get('canvas').addMarker('Activity_1pssn0f', 'highlight');
+            highlightActiveTasks(['Activity_1pssn0f']);
           }
         });
       };
@@ -154,7 +164,7 @@ const BPMN = () => {
 
   const handleOpenFileDialog = () => {
     fileInputRef.current.click();
-    
+
   };
 
   const handleSelectFile = () => {
@@ -180,14 +190,14 @@ const BPMN = () => {
         if (response?.status === 200 && response?.statusText === '') {
           const data = res?.deployedProcessDefinitions
           let keySave = ''
-          Object.keys(data).forEach(function(k, index) {
+          Object.keys(data).forEach(function (k, index) {
             keySave = data[k]?.key
           });
           console.log('keySave', keySave)
           webLocalStorage.set('KEY', keySave)
-          globalModal.open({title : 'Upload file thành công', onCancel : ''})
+          globalModal.open({ title: 'Upload file thành công', onCancel: '' })
         } else {
-          globalModal.open({title : 'Upload file không thành công', onCancel : ''})
+          globalModal.open({ title: 'Upload file không thành công', onCancel: '' })
         }
       } catch (error) {
         globalLoading.hide()
@@ -195,7 +205,7 @@ const BPMN = () => {
         globalModal.open({
           title: 'Lỗi hệ thống ! Hãy thử lại sau.',
           children: undefined
-      })
+        })
       }
     }
   };
