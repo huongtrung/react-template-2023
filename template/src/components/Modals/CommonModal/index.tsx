@@ -4,7 +4,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  IconButton
+  IconButton,
+  Box
 } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close'
 import styled from "styled-components"
@@ -19,18 +20,18 @@ const PROPS_CONFIG: PropsConfigIF = {
   [PROPS_CONFIG_TYPES.DEFAULT]: {},
 }
 
-const INIT_CONFIG: CommonModalState = {
+const INIT_CONFIG: CommonModalState | null = {
   open: false,
   closable: true,
   children: null,
   hiddenArea: [
     ACTION_AREA.ACCEPT_BUTTON,
-    ACTION_AREA.CANCEL_BUTTON,
     ACTION_AREA.BACKDROP,
     ACTION_AREA.CLOSE_ICON
   ],
   keepData: false,
-  propsConfig: PROPS_CONFIG_TYPES.DEFAULT
+  propsConfig: PROPS_CONFIG_TYPES.DEFAULT,
+  hideFooter: false
 }
 
 const CommonModal = forwardRef<GlobalModalRefIF>(function CommonModal(_props, ref) {
@@ -68,6 +69,7 @@ const CommonModal = forwardRef<GlobalModalRefIF>(function CommonModal(_props, re
       onTransitionExited={clearModalData}
       {...propsConfigData?.dialog}
     >
+       <Box sx={{ margin : 2}}>
       {
         config.closable &&
         <IconButton edge="end" onClick={closeModal}
@@ -81,21 +83,24 @@ const CommonModal = forwardRef<GlobalModalRefIF>(function CommonModal(_props, re
           {config.closeIcon || propsConfigData.closeIcon?.children || <CloseIcon />}
         </IconButton>
       }
-      <DialogTitle {...propsConfigData?.title}>{config.title}</DialogTitle>
-      <DialogContent {...propsConfigData?.content}>
+      <DialogTitle style={{ marginTop : 20, marginBottom: 10, color : 'black', fontWeight : 'bold'}} {...propsConfigData?.title}>{config.title}</DialogTitle>
+      {/* <DialogContent {...propsConfigData?.content}>
         {config.children}
-      </DialogContent>
-      <DialogActions {...propsConfigData?.action}>
-        <Action
-          footer={config.footer}
-          okText={config.okText}
-          cancelText={config.cancelText}
-          onOk={config.onOk}
-          onCancel={config.onCancel}
-          hiddenArea={config.hiddenArea}
-          setConfig={setConfig}
-        />
-      </DialogActions>
+      </DialogContent> */}
+      {!config.hideFooter &&
+        <DialogActions {...propsConfigData?.action}>
+          <Action
+            footer={config.footer}
+            okText={config.okText}
+            cancelText={config.cancelText}
+            onOk={config.onOk}
+            onCancel={config.onCancel}
+            hiddenArea={config.hiddenArea}
+            setConfig={setConfig}
+          />
+        </DialogActions>
+      }
+      </Box>
     </Dialog>
   )
 })

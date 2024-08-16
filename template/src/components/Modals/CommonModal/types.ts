@@ -30,9 +30,11 @@ export interface PropsConfigIF {
 
 export enum COMPONENT_TYPE {
   DEFAULT = "DEFAULT",
+  HIDE_FOOTER = "HIDE_FOOTER",
 }
 
 export interface CommonModalState {
+  hideFooter?: boolean
   open: DialogProps["open"]
   /**
    * Specifying whether to display close icon or not.

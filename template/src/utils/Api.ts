@@ -2,6 +2,7 @@ import { AxiosRequestConfig, AxiosResponse } from "axios"
 
 import axiosInstance from "@/config/axios"
 import { RESPONSE_CODE } from "@/constants/HTTPResponseStatus"
+import { globalModal } from "@/components/Modals/GlobalModal"
 
 interface RequestConfig extends AxiosRequestConfig {
   contentType: string
@@ -15,26 +16,6 @@ interface FetchParams {
 }
 
 class ApiUtil {
-  async configRequest(config: RequestConfig) {
-    const {
-      method = "POST",
-      timeout = 3000,
-      headers = {},
-      contentType,
-      url,
-    } = config
-
-    return {
-      url,
-      method,
-      timeout,
-      headers: {
-        ...headers,
-        "Content-Type": contentType,
-        Authorization: "Bearer Token...",
-      },
-    }
-  }
 
   async onError(response: AxiosResponse) {
     const { data: responseData } = response
@@ -48,8 +29,39 @@ class ApiUtil {
 
       case RESPONSE_CODE.CONTENT_TOO_LARGE:
         break
-
+      case 500:
+      case 404:
+        globalModal.open({
+          title: 'Lỗi hệ thống ! Hãy thử lại sau.',
+          children: undefined
+        })
+        break
       default:
+
+    }
+  }
+
+  async configRequest(config: RequestConfig) {
+    const {
+      method = "POST",
+      timeout = 3000,
+      headers = {},
+      contentType,
+      url,
+      data
+    } = config
+
+    return {
+      url,
+      method,
+      timeout,
+      data,
+      headers: {
+        ...headers,
+        "Content-Type": contentType,
+        // "Access-Control-Allow-Origin" : "*",
+        // Authorization: "Bearer Token...",
+      },
     }
   }
 
@@ -67,11 +79,12 @@ class ApiUtil {
         contentType,
         url,
       })
+      console.log('config ', requestConfig)
       const response = await axiosInstance(requestConfig)
 
       if (response.data.status !== RESPONSE_CODE.SUCCESS && useGeneralErrorHandlding) this.onError(response)
       return response
-    } catch (error) {}
+    } catch (error) { }
   }
 }
 

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useRef } from "react"
 import FormInput from "@/components/FormInput"
 import {
   Box,
@@ -15,6 +15,7 @@ import { testSchema } from "./validate"
 import { typeInputComponent } from "@/components/FormInput/helper"
 import { CustomButton } from "@/components"
 import { isEmpty } from "ramda"
+import { Formio } from "formiojs"
 
 const TFFN = TEST_FORM_FIELD_NAME
 
@@ -28,6 +29,8 @@ const TestForm = () => {
     mode: "onSubmit",
     resolver: yupResolver(testSchema),
   })
+
+  const containerRef = useRef(null);
 
   const {
     control,
@@ -44,79 +47,66 @@ const TestForm = () => {
   const onError = () => {
     console.log({ errors })
   }
-  return (
-    <Box>
-      <Card
-        sx={{
-          width: "50%",
-          p: 5,
-          m: 5,
-        }}
-      >
-        <CardHeader title='Test Form' />
-        <CardContent>
-          <FormInput
-            label='Input Text'
-            placeholder='Type sth ...'
-            control={control}
-            name={TFFN.INPUT_TEXT}
-            type={typeInputComponent.InputText}
-            errorMessage={errors[TFFN.INPUT_TEXT]?.message}
-          />
-          <FormInput
-            label='Input Select'
-            placeholder='Type sth ...'
-            control={control}
-            name={TFFN.INPUT_SELECT}
-            options={select_options}
-            type={typeInputComponent.InputSelect}
-            errorMessage={errors[TFFN.INPUT_SELECT]?.message}
-          />
-          <FormInput
-            label='Input Date'
-            placeholder='Type sth ...'
-            control={control}
-            name={TFFN.INPUT_DATE}
-            type={typeInputComponent.InputDate}
-            errorMessage={errors[TFFN.INPUT_DATE]?.message}
-          />
-          <FormInput
-            label='Input Checkbox'
-            control={control}
-            name={TFFN.INPUT_CHECKBOX}
-            type={typeInputComponent.InputCheckbox}
-            errorMessage={errors[TFFN.INPUT_CHECKBOX]?.message}
 
-          />
-          <FormInput
-            label='Input Radio'
-            options={select_options}
-            control={control}
-            name={TFFN.INPUT_RADIO}
-            type={typeInputComponent.InputRadio}
-            errorMessage={errors[TFFN.INPUT_RADIO]?.message}
-          />
-        </CardContent>
-        <CardActions>
-          <CustomButton
-            title='Submit'
-            onClick={() => {
-              console.log("log")
-              handleSubmit(onSubmit, onError)()
-            }}
-          />
-          <CustomButton
-            title='Get value'
-            onClick={() => {
-              const values = getValues()
-              if(!isEmpty(errors)) console.log({errors})
-              console.log("log", values)
-              
-            }}
-          />
-        </CardActions>
-      </Card>
-    </Box>
+  useEffect(() => {
+    Formio.createForm(containerRef.current, {
+      components: [
+        {
+          firstName: {
+            title: 'First Name',
+            key: 'firstName',
+            icon: 'terminal',
+            schema: {
+                label: 'First Name',
+                type: 'textfield',
+                key: 'firstName',
+                input: true
+            }
+        },
+        lastName: {
+            title: 'Last Name',
+            key: 'lastName',
+            icon: 'terminal',
+            schema: {
+              label: 'Last Name',
+              type: 'textfield',
+              key: 'lastName',
+              input: true
+            }
+        },
+        email: {
+            title: 'Email',
+            key: 'email',
+            icon: 'at',
+            schema: {
+                label: 'Email',
+                type: 'email',
+                key: 'email',
+                input: true
+            }
+        },
+        phoneNumber: {
+            title: 'Mobile Phone',
+            key: 'mobilePhone',
+            icon: 'phone-square',
+            schema: {
+                label: 'Mobile Phone',
+                type: 'phoneNumber',
+                key: 'mobilePhone',
+                input: true
+            }
+        }
+        }
+      ]
+    }).then(function (form) {
+      form.on('submit', function (submission: any) {
+        console.log(submission);
+      });
+    });
+  }, [])
+
+  return (
+    <div style={{ flex: 1 }} ref={containerRef}></div>
   )
 }
 

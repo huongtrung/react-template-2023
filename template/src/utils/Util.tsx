@@ -1,6 +1,36 @@
+import { ROLE } from '@/constants/Constants';
 import axios from 'axios';
 import * as R from 'ramda'
 export default class Utilities {
+
+  static leverUser = (role: string) => {
+    switch (role) {
+      case ROLE.ADMIN:
+        return 'Chức vụ : Quản trị viên'
+      case ROLE.QLTT:
+        return 'Chức vụ : Quản lý trực tiếp'
+      case ROLE.TP:
+        return 'Chức vụ : Trưởng phòng'
+      case ROLE.GDK:
+        return 'Chức vụ : Giám đốc khối'
+      default:
+        return 'Chức vụ : Nhân viên'
+    }
+  }
+
+  static userId = (role: string) => {
+    switch (role) {
+      case ROLE.QLTT:
+        return 'quanlytructiep'
+      case ROLE.TP:
+        return 'truongphong'
+      case ROLE.GDK:
+        return 'tonggiamdoc'
+      default:
+        return 'nhanvien'
+    }
+  }
+
 
   static isNullish = (obj: any) => {
     if (obj == null || obj == undefined) {
@@ -116,7 +146,7 @@ export default class Utilities {
   }
 
   static existsKey(object: { hasOwnProperty: (arg0: any) => any }, key: any) {
-    const result  = Object.prototype.hasOwnProperty.call(object, key);
+    const result = Object.prototype.hasOwnProperty.call(object, key);
     return result
   }
 
@@ -229,10 +259,10 @@ export default class Utilities {
   }
 
   static replaceMoneyMillion(m: any) {
-    if(m?.endsWith('.') || m?.endsWith('.0')){
+    if (m?.endsWith('.') || m?.endsWith('.0')) {
       return m?.split('.')[0]
     }
-    if(m?.endsWith(',0')){
+    if (m?.endsWith(',0')) {
       return m?.split(',')[0]
     }
     return m
@@ -455,7 +485,7 @@ export default class Utilities {
     const upperStr2 = this.replaceVietnamese(str2)?.toUpperCase()
     return upperStr1 == upperStr2
   }
-  
+
 }
 
 

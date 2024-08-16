@@ -1,4 +1,13 @@
 module.exports = {
-  root: true,
-  extends: '@react-native-community',
+ "extends": ["react-app"],
+  "rules": {
+  },
+  "overrides": [
+    {
+      "files": ["**/*.js?(x)"],
+      "rules": {
+        "no-unused-vars": "off"
+      }
+    }
+  ]
 };

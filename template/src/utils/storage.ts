@@ -11,7 +11,7 @@ export class WebStorage {
 
   public get(key: string): any {
     const value = this.storage.getItem(key)
-    return value ? JSON.parse(value) : null
+    return value ? JSON.parse(value) : 'QuyTrinhXinNghiPhep'
   }
 
   public remove(key: string): void {

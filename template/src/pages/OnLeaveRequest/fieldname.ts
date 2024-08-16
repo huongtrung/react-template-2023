@@ -1,0 +1,8 @@
+export const FORM_FIELD_NAME = {
+    NAME: 'NAME',
+    DAY_OFF: 'DAY_OFF',
+    DAY_START: 'DAY_START',
+    DAY_END: 'DAY_END',
+    OFF_METHOD: 'OFF_METHOD',
+    REASON: 'REASON',
+}
